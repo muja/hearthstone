@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'pathname'
 require 'cgi'
 require 'open-uri'
 require 'yaml'
@@ -8,6 +9,13 @@ require 'net/http'
 require 'readline'
 require 'ostruct'
 include Readline
+
+# CHANGE PWD TO REAL PATH
+base = $0
+while File.symlink? base
+  base = File.readlink base
+end
+Dir.chdir(Pathname.new(base).parent) unless base == $0
 
 CARDS = YAML.load_file("cards.yml").map(&:last).map(&OpenStruct.method(:new))
 CLASSES =  {
@@ -67,7 +75,7 @@ loop do
 end
 
 CARDS.keep_if do |card|
-  !card.to_h.key?(:class) or card.class == selected_class
+  !card.to_h.key?(:class) or card[:class] == selected_class
 end
 
 deck = []
