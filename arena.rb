@@ -56,10 +56,12 @@ def fuzzy_find(input, collection)
   end
 end
 
-selected_class = (ARGV.shift || readline("Choose class: ")).capitalize
-class_value = CLASSES.invert[selected_class]
+selected_class = nil
+loop do
+  selected_class = (ARGV.shift || readline("Choose class: ")).capitalize
+  class_value = CLASSES.invert[selected_class]
 
-unless CLASSES.values.include? selected_class
+  break if CLASSES.values.include? selected_class
   puts "No such class: #{selected_class}."
   puts "Choose between: #{CLASSES.values.join(", ")}"
 end
@@ -122,7 +124,7 @@ loop do
           {picked: card.id, options: [card.id, 471, 471]}
         end
         puts "To submit the draft, go to heartharena.com, login and enter this in the console:"
-        script = <<-EOF.gsub(/\s+/, ' ').strip
+        puts <<-EOF.gsub(/\s+/, ' ').strip
         $.ajax({
           type: "POST",
           url: "/arena/save/#{class_value}",
@@ -132,13 +134,12 @@ loop do
           }
         })
         EOF
-        puts script
       elsif deck.length > 30
-        puts "Too many cards! Delete some"
+        puts "Too many cards! HAVE: #{deck.length}, NEED: 30"
       else
-        puts "Not enough cards!"
+        puts "Not enough cards! HAVE: #{deck.length}, NEED: 30"
       end
-    when /\Af(?:ind)? (.*)\z/
+    when /\A(?:f(?:ind)?|q(?:uery)?) (.*)\z/
       pat = $1
       matches = fuzzy_find(pat, CARDS, &:name).map(&:name)
       if matches.length <= 20
@@ -195,6 +196,21 @@ loop do
     when /^e(?:rr(?:or)?)?$/
       p error
       puts error.backtrace
+    when /\?|help|m/
+      puts "Available commands are:"
+      puts "f[ind] / q[uery] `expr`   list all cards that match `expr`"
+      puts "p[ick] `expr`             pick the card that matches `expr`"
+      puts "`e1` vs `e2` [vs `e3`]    ask Heartharena.com to compare the cards matching `e1`-`e3`"
+      puts "                          The cards will be stored to enable picking via"
+      puts "                          `p 1`, `p 2` or `p 3` in a subsequent command"
+      puts "                          e.g.: `Wisp vs Ogre Brute` and then `p 2` to pick Ogre"
+      puts "c[hoices]                 Show the last choices that were stored (from above command)"
+      puts "l[ist|s]                  List the current drafted deck"
+      puts "e[rr[or]]                 Show the last error message with debug info"
+      puts "d[elete] `expr`           Deletes the card from the deck that matches `expr`"
+      puts "s[ubmit|ave]              Output script to persist the drafted deck for heartharena.com"
+      puts "?|help|m                  Print this help"
+      puts
     else
       puts "Could not match command"
       next
