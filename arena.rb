@@ -65,6 +65,7 @@ def fuzzy_find(input, collection)
 end
 
 selected_class = nil
+class_value = nil
 loop do
   selected_class = (ARGV.shift || readline("Choose class: ")).capitalize
   class_value = CLASSES.invert[selected_class]
