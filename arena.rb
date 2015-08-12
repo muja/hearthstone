@@ -4,12 +4,12 @@ require 'cgi'
 require 'open-uri'
 require 'yaml'
 require 'json'
-require 'hashie'
 require 'net/http'
 require 'readline'
+require 'ostruct'
 include Readline
 
-CARDS = YAML.load_file("cards.yml").map(&:last).map(&Hashie::Mash.method(:new))
+CARDS = YAML.load_file("cards.yml").map(&:last).map(&OpenStruct.method(:new))
 CLASSES =  {
   1 => "Druid",
   2 => "Hunter",
@@ -67,7 +67,7 @@ loop do
 end
 
 CARDS.keep_if do |card|
-  !card.key?("class") or card["class"] == selected_class
+  !card.to_h.key?(:class) or card.class == selected_class
 end
 
 deck = []
