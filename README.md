@@ -51,9 +51,9 @@ s[ubmit|ave]              Output script to persist the drafted deck for hearthar
 ?|help|m                  Print this help
 ```
 
-The `submit`/`save` command is really useful if you want to submit the draft to Heartharena (only works with 30 cards):  
+The `submit`/`save` command is really useful if you want to submit the draft to Heartharena:  
 It will print a Javascript snippet that you can paste in the console on the heartharena website.
-Or in the address bar by prepending `javascript:` before it. This step is necessary because the script has no access to your cookies
+Or in the address bar by prepending `javascript:` before it. This step is necessary because we have no access to your cookies
 so the created draft would be an orphan in the heartharena universe.
 
 ### Installation
@@ -77,3 +77,18 @@ If older Ruby support is wished (and not possible), you can tell me, I'll work o
 If Windows users would like to use this but they don't have/want Ruby, I may look into rewriting it 
 as a Rust or Go project.  
 
+
+### Issues
+
+Picking **Mind Control** (and a few other cards) can sometimes be rather hard,
+because the tool will not be sure whether you meant **Mind Control Tech** - currently,
+the only solution to this is to  *quote* **Mind Control** like this:
+
+```
+> p Mind Control
+Multiple matches: Mind Control Tech, Mind Control
+> p "Mind Control"
+Picking Mind Control
+```
+
+As a solution, maybe a list of matches would be nice to choose from using numbers.
